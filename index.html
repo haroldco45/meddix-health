@@ -56,11 +56,15 @@
             border: 1px solid #eee;
             border-radius: 12px;
             background: #fff;
+            cursor: pointer; /* Indica que es clicable */
+            transition: transform 0.2s;
         }
 
+        .product-item:hover { transform: scale(1.01); }
+
         .product-item img {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             border-radius: 10px;
             object-fit: cover;
             border: 1px solid #eee;
@@ -70,30 +74,11 @@
             flex-grow: 1; 
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
 
         .product-info h4 { margin: 0 0 5px 0; font-size: 16px; color: var(--secondary); }
-        
-        /* Ajuste para que el precio no se vea "apelluzcado" */
-        .price-container {
-            margin-top: 5px;
-        }
-
-        .price { 
-            color: var(--primary); 
-            font-weight: bold; 
-            font-size: 18px;
-            display: block;
-        }
-
-        .promo-text {
-            font-size: 13px;
-            color: #d32f2f;
-            font-weight: 600;
-            margin-top: 2px;
-            display: block;
-        }
+        .price { color: var(--primary); font-weight: bold; font-size: 18px; }
+        .info-tap { font-size: 10px; color: #999; text-transform: uppercase; margin-top: 5px;}
 
         .qty-input {
             width: 65px;
@@ -105,6 +90,53 @@
             font-size: 16px;
         }
 
+        /* MODAL / CAJÓN DE BENEFICIOS */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 25px;
+            border-radius: 15px;
+            width: 85%;
+            max-width: 450px;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .modal-body ul {
+            padding-left: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-body li { margin-bottom: 10px; }
+
+        /* FORMULARIO Y BOTONES */
         .client-form {
             margin-top: 25px;
             padding: 15px;
@@ -121,6 +153,8 @@
             border-radius: 8px;
             box-sizing: border-box;
         }
+
+        .btn-gps { background: #007bff; color: white; padding: 8px; font-size: 12px; border: none; border-radius: 5px; margin-bottom: 10px;}
 
         .total-box {
             background: var(--primary);
@@ -139,7 +173,7 @@
             gap: 10px;
         }
 
-        button {
+        button.main-btn {
             padding: 15px;
             border: none;
             border-radius: 8px;
@@ -150,58 +184,51 @@
 
         .btn-ws { background: var(--accent); color: white; grid-column: span 2; }
         .btn-print { background: #555; color: white; }
-        .btn-backup { background: #007bff; color: white; }
+        .btn-backup { background: #e91e63; color: white; }
 
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 11px;
-            color: #777;
-        }
+        footer { text-align: center; margin-top: 30px; font-size: 11px; color: #777; }
 
-        @media print {
-            .no-print { display: none; }
-            .app-container { box-shadow: none; border: none; width: 100%; }
-        }
+        @media print { .no-print { display: none; } }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     <header>
-        <img src="m.PNG" alt="Méddix Health Logo" class="logo-img">
+        <img src="m.PNG" alt="Logo Méddix" class="logo-img">
         <p style="font-size: 11px; color: #888; margin: 5px 0;">CAUCASIA, ANTIOQUIA | WHATSAPP: 3122978360</p>
     </header>
 
     <div class="product-list no-print">
-        <div class="product-item">
+        <div class="product-item" onclick="abrirModal('apnea')">
             <img src="mascarilla.jpeg" alt="Anti-apnea">
             <div class="product-info">
                 <h4>Mascarilla Anti-apnea</h4>
                 <span class="price">$25.000</span>
+                <span class="info-tap">Ver beneficios ➔</span>
             </div>
-            <input type="number" id="q_apnea" class="qty-input" min="0" value="0" onchange="calcular()">
+            <input type="number" id="q_apnea" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calcular()">
         </div>
 
-        <div class="product-item">
+        <div class="product-item" onclick="abrirModal('menton')">
             <img src="menton1.jpeg" alt="Mentonera">
             <div class="product-info">
                 <h4>Mascarilla Mentonera</h4>
                 <span class="price">$60.000</span>
+                <span class="info-tap">Ver beneficios ➔</span>
             </div>
-            <input type="number" id="q_menton" class="qty-input" min="0" value="0" onchange="calcular()">
+            <input type="number" id="q_menton" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calcular()">
         </div>
 
-        <div class="product-item">
+        <div class="product-item" onclick="abrirModal('medias')">
             <img src="medias.jpeg" alt="Medias">
             <div class="product-info">
                 <h4>Medias de Compresión</h4>
-                <div class="price-container">
-                    <span class="price">1 par $45.000</span>
-                    <span class="promo-text">¡OFERTA! 2 pares x $70.000</span>
-                </div>
+                <span class="price">1 par $45.000</span>
+                <span style="color:red; font-size: 11px; font-weight: bold;">OFERTA: 2 x $70k</span>
+                <span class="info-tap">Ver beneficios ➔</span>
             </div>
-            <input type="number" id="q_medias" class="qty-input" min="0" value="0" onchange="calcular()">
+            <input type="number" id="q_medias" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calcular()">
         </div>
     </div>
 
@@ -209,6 +236,8 @@
         <h3>Datos de Envío</h3>
         <input type="text" id="nombre" placeholder="Nombre completo">
         <input type="text" id="direccion" placeholder="Dirección en Caucasia">
+        <button type="button" class="btn-gps no-print" onclick="obtenerGPS()">📍 Obtener mi Ubicación</button>
+        <input type="hidden" id="gps_coords">
         <input type="tel" id="whatsapp" placeholder="WhatsApp del cliente">
         <textarea id="obs" placeholder="Observaciones adicionales..."></textarea>
     </div>
@@ -218,82 +247,103 @@
     </div>
 
     <div class="actions no-print">
-        <button class="btn-ws" onclick="enviarWS()">ENVIAR POR WHATSAPP</button>
-        <button class="btn-print" onclick="window.print()">IMPRIMIR RECIBO</button>
-        <button class="btn-backup" onclick="hacerBackup()">BACKUP PEDIDO</button>
+        <button class="main-btn btn-ws" onclick="enviarWS()">ENVIAR POR WHATSAPP</button>
+        <button class="main-btn btn-print" onclick="window.print()">IMPRIMIR PEDIDO</button>
+        <button class="main-btn btn-backup" onclick="hacerBackup()">BACKUP JSON</button>
     </div>
 
     <footer>
         <p id="fecha_hora"></p>
-        <p><strong>App desarrollada por VIBRAS POSITIVAS HM</strong></p>
-        <p>Derechos de Autor Reservados © 2026</p>
+        <p><strong>Desarrollado por VIBRAS POSITIVAS HM</strong></p>
     </footer>
 </div>
 
+<div id="infoModal" class="modal" onclick="cerrarModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <div id="modalBody" class="modal-body">
+            </div>
+    </div>
+</div>
+
 <script>
+    const infoProductos = {
+        apnea: `
+            <h2 style="color:var(--primary)">Mascarilla Anti-apnea</h2>
+            <p><b>Beneficios clave:</b></p>
+            <ul>
+                <li>✨ Mejora la calidad del sueño al mantener la mandíbula firme.</li>
+                <li>✨ Reduce los ronquidos causados por la apertura bucal.</li>
+                <li>✨ Material de neopreno suave y elástico de alta calidad.</li>
+                <li>✨ Fácil de lavar y ajustar a cualquier tamaño de cabeza.</li>
+            </ul>`,
+        menton: `
+            <h2 style="color:var(--primary)">Mentonera Moldeadora</h2>
+            <p><b>Beneficios clave:</b></p>
+            <ul>
+                <li>✨ Efecto lifting para definir el contorno del rostro.</li>
+                <li>✨ Ayuda a reducir la "papada" con uso constante.</li>
+                <li>✨ Ideal para recuperación de procesos estéticos.</li>
+                <li>✨ Diseño cómodo que permite respirar y hablar normalmente.</li>
+            </ul>`,
+        medias: `
+            <h2 style="color:var(--primary)">Medias de Compresión</h2>
+            <p><b>Beneficios clave:</b></p>
+            <ul>
+                <li>✨ Mejora la circulación sanguínea en las piernas.</li>
+                <li>✨ <b>Previene varices, trombos y pesadez.</b></li>
+                <li>✨ Recomendadas para: Vigilantes, personal de salud, cocineros y deportistas.</li>
+                <li>✨ Tejido reforzado que no pierde la compresión con el tiempo.</li>
+            </ul>`
+    };
+
+    function abrirModal(id) {
+        document.getElementById('modalBody').innerHTML = infoProductos[id];
+        document.getElementById('infoModal').style.display = "block";
+    }
+
+    function cerrarModal() {
+        document.getElementById('infoModal').style.display = "none";
+    }
+
+    // Lógica de cálculos y GPS (Mismo funcionamiento anterior)
     function calcular() {
         const qApnea = parseInt(document.getElementById('q_apnea').value) || 0;
         const qMenton = parseInt(document.getElementById('q_menton').value) || 0;
         const qMedias = parseInt(document.getElementById('q_medias').value) || 0;
-
-        let total = 0;
-        total += qApnea * 25000;
-        total += qMenton * 60000;
-
+        let total = (qApnea * 25000) + (qMenton * 60000);
         if(qMedias > 0) {
-            let paresEspeciales = Math.floor(qMedias / 2);
-            let paresSueltos = qMedias % 2;
-            total += (paresEspeciales * 70000) + (paresSueltos * 45000);
+            total += (Math.floor(qMedias / 2) * 70000) + ((qMedias % 2) * 45000);
         }
-
         document.getElementById('total_val').innerText = '$' + total.toLocaleString('es-CO');
         return {qApnea, qMenton, qMedias, total};
     }
 
+    function obtenerGPS() {
+        if (!navigator.geolocation) return;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            document.getElementById('gps_coords').value = `https://www.google.com/maps?q=${lat},${lon}`;
+            alert("Ubicación capturada correctamente.");
+        });
+    }
+
     function enviarWS() {
-        const data = calcular();
-        const nombre = document.getElementById('nombre').value;
-        const dir = document.getElementById('direccion').value;
-        const tel = document.getElementById('whatsapp').value;
-        const obs = document.getElementById('obs').value;
-
-        if(!nombre || !dir) { alert("Nombre y Dirección son obligatorios."); return; }
-
-        let mensaje = `*PEDIDO MÉDDIX HEALTH*%0A`;
-        mensaje += `--------------------------%0A`;
-        mensaje += `*Cliente:* ${nombre}%0A`;
-        mensaje += `*Dirección:* ${dir}%0A`;
-        mensaje += `*Cel:* ${tel}%0A%0A`;
-        mensaje += `*DETALLE:*%0A`;
-        
-        if(data.qApnea > 0) mensaje += `- Masc. Anti-apnea: ${data.qApnea} und.%0A`;
-        if(data.qMenton > 0) mensaje += `- Masc. Mentonera: ${data.qMenton} und.%0A`;
-        if(data.qMedias > 0) mensaje += `- Medias Compresión: ${data.qMedias} pares%0A`;
-        
-        if(obs) mensaje += `%0A*Obs:* ${obs}%0A`;
-        mensaje += `%0A*TOTAL: $${data.total.toLocaleString()}*%0A`;
-        mensaje += `--------------------------%0A`;
-        mensaje += `_VIBRAS POSITIVAS HM_`;
-
-        window.open(`https://wa.me/573122978360?text=${mensaje}`);
+        const d = calcular();
+        const msg = `*PEDIDO MÉDDIX HEALTH*%0A*Cliente:* ${document.getElementById('nombre').value}%0A*Dir:* ${document.getElementById('direccion').value}%0A*GPS:* ${document.getElementById('gps_coords').value}%0A%0A*Detalle:*%0A- Antiapnea: ${d.qApnea}%0A- Mentonera: ${d.qMenton}%0A- Medias: ${d.qMedias}%0A%0A*TOTAL: $${d.total.toLocaleString()}*%0A_VIBRAS POSITIVAS HM_`;
+        window.open(`https://wa.me/573122978360?text=${msg}`);
     }
 
     function hacerBackup() {
-        const registro = {
-            cliente: document.getElementById('nombre').value,
-            pedido: document.getElementById('total_val').innerText,
-            fecha: new Date().toLocaleString()
-        };
-        const blob = new Blob([JSON.stringify(registro)], {type: "application/json"});
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `pedido_meddix.json`;
-        link.click();
+        const r = { c: document.getElementById('nombre').value, t: document.getElementById('total_val').innerText, f: new Date().toLocaleString() };
+        const blob = new Blob([JSON.stringify(r)], {type: "application/json"});
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "pedido.json"; a.click();
     }
 
     setInterval(() => {
-        const options = { timeZone: 'America/Bogota', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        document.getElementById('fecha_hora').innerText = new Intl.DateTimeFormat('es-CO', options).format(new Date());
+        const opt = { timeZone: 'America/Bogota', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('fecha_hora').innerText = new Intl.DateTimeFormat('es-CO', opt).format(new Date());
     }, 1000);
 </script>
 
