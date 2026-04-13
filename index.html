@@ -56,7 +56,7 @@
             border: 1px solid #eee;
             border-radius: 12px;
             background: #fff;
-            cursor: pointer; /* Indica que es clicable */
+            cursor: pointer;
             transition: transform 0.2s;
         }
 
@@ -90,7 +90,6 @@
             font-size: 16px;
         }
 
-        /* MODAL / CAJÓN DE BENEFICIOS */
         .modal {
             display: none;
             position: fixed;
@@ -136,7 +135,6 @@
 
         .modal-body li { margin-bottom: 10px; }
 
-        /* FORMULARIO Y BOTONES */
         .client-form {
             margin-top: 25px;
             padding: 15px;
@@ -207,7 +205,7 @@
                 <span class="price">$25.000</span>
                 <span class="info-tap">Ver beneficios ➔</span>
             </div>
-            <input type="number" id="q_apnea" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calcular()">
+            <input type="number" id="q_apnea" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calculateTotal()">
         </div>
 
         <div class="product-item" onclick="abrirModal('menton')">
@@ -217,7 +215,7 @@
                 <span class="price">$60.000</span>
                 <span class="info-tap">Ver beneficios ➔</span>
             </div>
-            <input type="number" id="q_menton" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calcular()">
+            <input type="number" id="q_menton" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calculateTotal()">
         </div>
 
         <div class="product-item" onclick="abrirModal('medias')">
@@ -225,10 +223,10 @@
             <div class="product-info">
                 <h4>Medias de Compresión</h4>
                 <span class="price">1 par $45.000</span>
-                <span style="color:red; font-size: 11px; font-weight: bold;">OFERTA: 2 x $70k</span>
+                <span style="color:red; font-size: 11px; font-weight: bold;">OFERTA: 3 x $110k ✅</span>
                 <span class="info-tap">Ver beneficios ➔</span>
             </div>
-            <input type="number" id="q_medias" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calcular()">
+            <input type="number" id="q_medias" class="qty-input" min="0" value="0" onclick="event.stopPropagation()" onchange="calculateTotal()">
         </div>
     </div>
 
@@ -260,9 +258,8 @@
 
 <div id="infoModal" class="modal" onclick="cerrarModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="close" onclick="cerrarModal()">&times;</span>
-        <div id="modalBody" class="modal-body">
-            </div>
+        <span class="close" onclick="cerrarModal()">×</span>
+        <div id="modalBody" class="modal-body"></div>
     </div>
 </div>
 
@@ -306,15 +303,20 @@
         document.getElementById('infoModal').style.display = "none";
     }
 
-    // Lógica de cálculos y GPS (Mismo funcionamiento anterior)
-    function calcular() {
+    function calculateTotal() {
         const qApnea = parseInt(document.getElementById('q_apnea').value) || 0;
         const qMenton = parseInt(document.getElementById('q_menton').value) || 0;
         const qMedias = parseInt(document.getElementById('q_medias').value) || 0;
+        
         let total = (qApnea * 25000) + (qMenton * 60000);
+        
+        // Lógica de Medias: 3 unidades por 110.000
         if(qMedias > 0) {
-            total += (Math.floor(qMedias / 2) * 70000) + ((qMedias % 2) * 45000);
+            let combosDeTres = Math.floor(qMedias / 3);
+            let sobrantes = qMedias % 3;
+            total += (combosDeTres * 110000) + (sobrantes * 45000);
         }
+        
         document.getElementById('total_val').innerText = '$' + total.toLocaleString('es-CO');
         return {qApnea, qMenton, qMedias, total};
     }
@@ -330,7 +332,7 @@
     }
 
     function enviarWS() {
-        const d = calcular();
+        const d = calculateTotal();
         const msg = `*PEDIDO MÉDDIX HEALTH*%0A*Cliente:* ${document.getElementById('nombre').value}%0A*Dir:* ${document.getElementById('direccion').value}%0A*GPS:* ${document.getElementById('gps_coords').value}%0A%0A*Detalle:*%0A- Antiapnea: ${d.qApnea}%0A- Mentonera: ${d.qMenton}%0A- Medias: ${d.qMedias}%0A%0A*TOTAL: $${d.total.toLocaleString()}*%0A_VIBRAS POSITIVAS HM_`;
         window.open(`https://wa.me/573122978360?text=${msg}`);
     }
