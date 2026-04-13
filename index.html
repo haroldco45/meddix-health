@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Méddix Health - Pedidos</title>
+    <style>
+        :root {
+            --primary: #00796b;
+            --secondary: #004d40;
+            --accent: #25d366;
+            --bg: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 10px;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-img {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .product-item img {
+            width: 90px;
+            height: 90px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .product-info { flex-grow: 1; }
+        .product-info h4 { margin: 0 0 5px 0; font-size: 16px; color: var(--secondary); }
+        .price { color: var(--primary); font-weight: bold; font-size: 18px; }
+
+        .qty-input {
+            width: 65px;
+            padding: 10px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .client-form {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        h3 { margin-top: 0; color: var(--secondary); font-size: 18px; }
+
+        input[type="text"], input[type="tel"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .total-box {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: right;
+            font-size: 22px;
+            margin: 20px 0;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,121,107,0.3);
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-ws { background: var(--accent); color: white; grid-column: span 2; font-size: 16px; margin-bottom: 5px; }
+        .btn-ws:hover { background: #1ebd59; }
+        .btn-print { background: #555; color: white; }
+        .btn-backup { background: #007bff; color: white; }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #777;
+        }
+
+        @media print {
+            .no-print { display: none; }
+            .app-container { box-shadow: none; border: 1px solid #000; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj33vRRxw7756VPFQDoi02Y" alt="Logo" class="logo-img" id="main_logo">
+        <p style="font-size: 11px; color: #888; margin: 5px 0;">CAUCASIA, ANTIOQUIA | WHATSAPP: 3122978360</p>
+    </header>
+
+    <div class="product-list no-print">
+        <div class="product-item">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqjpKWmp6ipqr1ztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1FVWV1hZWmNkZWZnaGlqc3R1dnd4eXqG" alt="Anti-apnea">
+            <div class="product-info">
+                <h4>Mascarilla Anti-apnea</h4>
+                <p class="price">$25.000</p>
+            </div>
+            <input type="number" id="q_apnea" class="qty-input" min="0" value="0" onchange="calcular()">
+        </div>
+
+        <div class="product-item">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqjpKWmp6ipqr1ztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1FVWV1hZWmNkZWZnaGlqc3R1dnd4eXqG" alt="Mentonera">
+            <div class="product-info">
+                <h4>Mascarilla Mentonera</h4>
+                <p class="price">$60.000</p>
+            </div>
+            <input type="number" id="q_menton" class="qty-input" min="0" value="0" onchange="calcular()">
+        </div>
+
+        <div class="product-item">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAEAAQADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqjpKWmp6ipqr1ztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1FVWV1hZWmNkZWZnaGlqc3R1dnd4eXqG" alt="Medias">
+            <div class="product-info">
+                <h4>Medias de Compresión</h4>
+                <p style="font-size: 10px; color: #666;">Para Salud, Vigilancia, Cocina y Deporte. Mejora la circulación.</p>
+                <p class="price" style="font-size: 14px;">1 par $45k | 2 pares $70k</p>
+            </div>
+            <input type="number" id="q_medias" class="qty-input" min="0" value="0" onchange="calcular()">
+        </div>
+    </div>
+
+    <div class="client-form">
+        <h3>Datos de Envío</h3>
+        <input type="text" id="nombre" placeholder="Nombre completo">
+        <input type="text" id="direccion" placeholder="Dirección en Caucasia">
+        <input type="tel" id="whatsapp" placeholder="WhatsApp del cliente">
+        <textarea id="obs" placeholder="Observaciones (Tallas, colores, etc.)"></textarea>
+    </div>
+
+    <div class="total-box">
+        TOTAL: <span id="total_val">$0</span>
+    </div>
+
+    <div class="actions no-print">
+        <button class="btn-ws" onclick="enviarWS()">ENVIAR PEDIDO POR WHATSAPP</button>
+        <button class="btn-print" onclick="window.print()">IMPRIMIR RECIBO</button>
+        <button class="btn-backup" onclick="hacerBackup()">RESPALDO (JSON)</button>
+    </div>
+
+    <footer>
+        <p id="fecha_hora"></p>
+        <p><strong>Desarrollado por VIBRAS POSITIVAS HM</strong></p>
+        <p>Derechos de Autor Reservados © 2026</p>
+    </footer>
+</div>
+
+<script>
+    // Nota: Las cadenas src de arriba son ejemplos de Base64. 
+    // Al ser incrustadas, el archivo HTML pesa un poco más pero no requiere fotos externas.
+
+    function calcular() {
+        const qApnea = parseInt(document.getElementById('q_apnea').value) || 0;
+        const qMenton = parseInt(document.getElementById('q_menton').value) || 0;
+        const qMedias = parseInt(document.getElementById('q_medias').value) || 0;
+
+        let total = 0;
+        total += qApnea * 25000;
+        total += qMenton * 60000;
+
+        if(qMedias > 0) {
+            let paresEspeciales = Math.floor(qMedias / 2);
+            let paresSueltos = qMedias % 2;
+            total += (paresEspeciales * 70000) + (paresSueltos * 45000);
+        }
+
+        document.getElementById('total_val').innerText = '$' + total.toLocaleString('es-CO');
+        return {qApnea, qMenton, qMedias, total};
+    }
+
+    function enviarWS() {
+        const data = calcular();
+        const nombre = document.getElementById('nombre').value;
+        const dir = document.getElementById('direccion').value;
+        const tel = document.getElementById('whatsapp').value;
+        const obs = document.getElementById('obs').value;
+
+        if(!nombre || !dir) { alert("Nombre y Dirección son obligatorios."); return; }
+
+        let mensaje = `*PEDIDO MÉDDIX HEALTH*%0A`;
+        mensaje += `--------------------------%0A`;
+        mensaje += `*Cliente:* ${nombre}%0A`;
+        mensaje += `*Dirección:* ${dir}%0A`;
+        mensaje += `*Cel:* ${tel}%0A%0A`;
+        mensaje += `*DETALLE:*%0A`;
+        
+        if(data.qApnea > 0) mensaje += `- Masc. Anti-apnea: ${data.qApnea} und.%0A`;
+        if(data.qMenton > 0) mensaje += `- Masc. Mentonera: ${data.qMenton} und.%0A`;
+        if(data.qMedias > 0) mensaje += `- Medias Compresión: ${data.qMedias} pares%0A`;
+        
+        if(obs) mensaje += `%0A*Observaciones:* ${obs}%0A`;
+        mensaje += `%0A*TOTAL: $${data.total.toLocaleString()}*%0A`;
+        mensaje += `--------------------------%0A`;
+        mensaje += `_VIBRAS POSITIVAS HM_`;
+
+        window.open(`https://wa.me/573122978360?text=${mensaje}`);
+    }
+
+    function hacerBackup() {
+        const registro = {
+            cliente: document.getElementById('nombre').value,
+            pedido: document.getElementById('total_val').innerText,
+            fecha: new Date().toLocaleString()
+        };
+        const blob = new Blob([JSON.stringify(registro)], {type: "application/json"});
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `backup_meddix_${Date.now()}.json`;
+        link.click();
+    }
+
+    // Hora Real Colombia
+    setInterval(() => {
+        const options = { timeZone: 'America/Bogota', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('fecha_hora').innerText = new Intl.DateTimeFormat('es-CO', options).format(new Date());
+    }, 1000);
+</script>
+
+</body>
+</html>
