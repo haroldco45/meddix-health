@@ -52,7 +52,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 12px;
+            padding: 15px;
             border: 1px solid #eee;
             border-radius: 12px;
             background: #fff;
@@ -66,9 +66,34 @@
             border: 1px solid #eee;
         }
 
-        .product-info { flex-grow: 1; }
+        .product-info { 
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
         .product-info h4 { margin: 0 0 5px 0; font-size: 16px; color: var(--secondary); }
-        .price { color: var(--primary); font-weight: bold; font-size: 18px; }
+        
+        /* Ajuste para que el precio no se vea "apelluzcado" */
+        .price-container {
+            margin-top: 5px;
+        }
+
+        .price { 
+            color: var(--primary); 
+            font-weight: bold; 
+            font-size: 18px;
+            display: block;
+        }
+
+        .promo-text {
+            font-size: 13px;
+            color: #d32f2f;
+            font-weight: 600;
+            margin-top: 2px;
+            display: block;
+        }
 
         .qty-input {
             width: 65px;
@@ -120,26 +145,23 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
             text-transform: uppercase;
         }
 
-        .btn-ws { background: var(--accent); color: white; grid-column: span 2; font-size: 16px; margin-bottom: 5px; }
+        .btn-ws { background: var(--accent); color: white; grid-column: span 2; }
         .btn-print { background: #555; color: white; }
         .btn-backup { background: #007bff; color: white; }
 
         footer {
             text-align: center;
             margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-            font-size: 12px;
+            font-size: 11px;
             color: #777;
         }
 
         @media print {
             .no-print { display: none; }
-            .app-container { box-shadow: none; border: 1px solid #000; width: 100%; }
+            .app-container { box-shadow: none; border: none; width: 100%; }
         }
     </style>
 </head>
@@ -153,10 +175,10 @@
 
     <div class="product-list no-print">
         <div class="product-item">
-            <img src="mascarilla.jpeg" alt="Mascarilla Anti-apnea">
+            <img src="mascarilla.jpeg" alt="Anti-apnea">
             <div class="product-info">
                 <h4>Mascarilla Anti-apnea</h4>
-                <p class="price">$25.000</p>
+                <span class="price">$25.000</span>
             </div>
             <input type="number" id="q_apnea" class="qty-input" min="0" value="0" onchange="calcular()">
         </div>
@@ -165,17 +187,19 @@
             <img src="menton1.jpeg" alt="Mentonera">
             <div class="product-info">
                 <h4>Mascarilla Mentonera</h4>
-                <p class="price">$60.000</p>
+                <span class="price">$60.000</span>
             </div>
             <input type="number" id="q_menton" class="qty-input" min="0" value="0" onchange="calcular()">
         </div>
 
         <div class="product-item">
-            <img src="medias.jpeg" alt="Medias de Compresión">
+            <img src="medias.jpeg" alt="Medias">
             <div class="product-info">
                 <h4>Medias de Compresión</h4>
-                <p style="font-size: 10px; color: #666; margin-bottom: 5px;">Ideal para personal de salud, vigilancia y deporte.</p>
-                <p class="price" style="font-size: 14px;">1 par $45k | 2 pares $70k</p>
+                <div class="price-container">
+                    <span class="price">1 par $45.000</span>
+                    <span class="promo-text">¡OFERTA! 2 pares x $70.000</span>
+                </div>
             </div>
             <input type="number" id="q_medias" class="qty-input" min="0" value="0" onchange="calcular()">
         </div>
@@ -186,7 +210,7 @@
         <input type="text" id="nombre" placeholder="Nombre completo">
         <input type="text" id="direccion" placeholder="Dirección en Caucasia">
         <input type="tel" id="whatsapp" placeholder="WhatsApp del cliente">
-        <textarea id="obs" placeholder="Observaciones (Tallas, colores, etc.)"></textarea>
+        <textarea id="obs" placeholder="Observaciones adicionales..."></textarea>
     </div>
 
     <div class="total-box">
@@ -194,9 +218,9 @@
     </div>
 
     <div class="actions no-print">
-        <button class="btn-ws" onclick="enviarWS()">ENVIAR PEDIDO POR WHATSAPP</button>
+        <button class="btn-ws" onclick="enviarWS()">ENVIAR POR WHATSAPP</button>
         <button class="btn-print" onclick="window.print()">IMPRIMIR RECIBO</button>
-        <button class="btn-backup" onclick="hacerBackup()">RESPALDO (JSON)</button>
+        <button class="btn-backup" onclick="hacerBackup()">BACKUP PEDIDO</button>
     </div>
 
     <footer>
@@ -246,10 +270,10 @@
         if(data.qMenton > 0) mensaje += `- Masc. Mentonera: ${data.qMenton} und.%0A`;
         if(data.qMedias > 0) mensaje += `- Medias Compresión: ${data.qMedias} pares%0A`;
         
-        if(obs) mensaje += `%0A*Observaciones:* ${obs}%0A`;
+        if(obs) mensaje += `%0A*Obs:* ${obs}%0A`;
         mensaje += `%0A*TOTAL: $${data.total.toLocaleString()}*%0A`;
         mensaje += `--------------------------%0A`;
-        mensaje += `_Desarrollado por VIBRAS POSITIVAS HM_`;
+        mensaje += `_VIBRAS POSITIVAS HM_`;
 
         window.open(`https://wa.me/573122978360?text=${mensaje}`);
     }
@@ -263,7 +287,7 @@
         const blob = new Blob([JSON.stringify(registro)], {type: "application/json"});
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `backup_meddix_${Date.now()}.json`;
+        link.download = `pedido_meddix.json`;
         link.click();
     }
 
